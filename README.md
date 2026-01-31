@@ -1,130 +1,147 @@
 # ConvoMundo
 
-ConvoMundo is a website for language teachers. It hosts conversation questions, lesson plans, and other resources. The site currently supports four languages, with plans to add more over time.
+ConvoMundo is a website for language teachers. It hosts conversation questions, lesson plans, and other useful resources.
 
-## Architecture
+## Repository layout
 
 This repository is a monorepo with three main areas:
 
-| Folder | Description |
-|--------|-------------|
-| **api** | Express (Node.js) backend with a small set of REST endpoints consumed by the frontend. Uses MongoDB via Mongoose. |
-| **app** | Vite + React frontend with React Router and Tailwind CSS. TypeScript. |
-| **infra** | Terraform configuration for AWS (VPC, EC2, S3, CloudFront, Route53, ACM, etc.). |
-
-You should be comfortable with React, Express, MongoDB, Terraform, and common AWS services (e.g. EC2, S3) to run and modify the project.
-
----
+| Folder | What it is |
+|--------|------------|
+| `api/` | Express (Node.js) backend API. MongoDB via Mongoose. |
+| `app/` | Vite + React + React Router frontend. TypeScript + Tailwind CSS. |
+| `infra/` | Terraform for AWS (VPC, EC2, S3, CloudFront, Route53, ACM, etc.). |
 
 ## Prerequisites
 
-- **Node.js** (v20 or similar; used by both api and app)
-- **MongoDB** (local instance or a connection string for a remote database)
-- **npm** (or another Node package manager)
+- **Node.js**: v20 (or similar)
+- **npm**: used in both `api/` and `app/`
+- **MongoDB**: local instance or hosted MongoDB connection string
 
 For infrastructure work:
 
 - **Terraform**
-- **AWS CLI** and credentials
+- **AWS CLI** (and configured credentials)
 
----
+## Quick start (local)
 
-## Local development
+In two terminals:
 
-### 1. API (backend)
+### 1) Start the API
 
-1. **Install dependencies**
+```bash
+cd api
+npm install
+```
 
-   ```bash
-   cd api
-   npm install
-   ```
+Create `api/.env`:
 
-2. **Environment variables**
+```env
+MONGODB_URI=mongodb://localhost:27017/convomundo
+PORT=3000
+```
 
-   Create `api/.env` with at least:
+Run the API:
 
-   ```env
-   MONGODB_URI=mongodb://localhost:27017/your-db-name
-   ```
+```bash
+node index.js
+```
 
-   Optional:
+Useful endpoints:
 
-   - `PORT` – server port (default: 3000)
+- `GET /health`
+- `GET /api/topics?lang=English`
+- `GET /api/topics/:id`
+- `GET /api/languages`
 
-3. **CORS (for local frontend)**
+### 2) Start the frontend
 
-   The API is configured in `api/index.js` to allow requests from `https://convomundo.com`. To run the frontend locally, temporarily set the CORS `origin` to your Vite dev server URL, for example:
+```bash
+cd app
+npm install
+npm run dev
+```
 
-   - `http://localhost:5173` (Vite default)
+Vite will print the dev URL in the terminal (commonly `http://localhost:5173`).
 
-   Change it back to the production domain before committing.
+## Local development notes
 
-4. **Run the API**
+### CORS
 
-   ```bash
-   node index.js
-   ```
+The API restricts allowed origins in `api/index.js` (production domains are whitelisted). If you want the local frontend to talk to the local API, add your Vite dev origin (for example `http://localhost:5173`) to the `allowedOrigins` set.
 
-   The API listens on the port from `PORT` or 3000. Health check: `GET http://localhost:3000/health`.
+### Frontend API base URL
 
-### 2. App (frontend)
+The frontend currently defines API URLs in `app/src/constants/api.ts`:
 
-1. **Install dependencies**
+- **production**: `https://api.convomundo.com`
+- **development**: `http://localhost:3000`
 
-   ```bash
-   cd app
-   npm install
-   ```
+For local full-stack development, ensure the frontend is actually using the development URL when running locally.
 
-2. **API URL**
+### Common scripts
 
-   The app uses the API base URL from `app/src/constants/api.ts`:
+Frontend (`app/`):
 
-   - Production: `https://api.convomundo.com`
-   - Development: `http://localhost:3000`
+- `npm run dev`
+- `npm run build`
+- `npm run preview`
+- `npm run lint`
 
-   For local full-stack development, ensure the app uses the development URL (e.g. by switching to `development_api_url` or using a dev check in that file) so it talks to your local API.
+Backend (`api/`):
 
-3. **Run the dev server**
+- Run with `node index.js` (there is no `npm start` script currently)
 
-   ```bash
-   npm run dev
-   ```
+## Environment variables
 
-   Vite serves the app on its default port (typically 5173). Other commands:
+Backend (`api/.env`):
 
-   - `npm run build` – production build
-   - `npm run preview` – preview production build locally
-   - `npm run lint` – run ESLint
-
----
-
-## Environment variables summary
-
-| Location | Variable | Required | Description |
-|----------|----------|----------|-------------|
-| api/.env | MONGODB_URI | Yes | MongoDB connection string |
-| api/.env | PORT | No | API port (default 3000) |
-
----
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `MONGODB_URI` | Yes | MongoDB connection string |
+| `PORT` | No | API port (default `3000`) |
 
 ## Infrastructure (Terraform)
 
-The `infra` folder defines AWS resources for hosting the API and frontend. Key variables (see `infra/variables.tf` and `infra/terraform.tfvars`) include:
+The `infra/` folder defines AWS resources for hosting the API and frontend. Key variables (see `infra/variables.tf`) include:
 
-- `aws_region` – e.g. `eu-north-1`
-- `my_ip_cidr` – your public IP in CIDR form (for SSH access)
-- `ec2_key_name` – existing EC2 key pair name
-- `github_repo_https` – repo clone URL used by deployment
+- `aws_region` (default `eu-north-1`)
+- `my_ip_cidr` (your public IP in CIDR format for SSH access)
+- `ec2_key_name` (existing EC2 key pair name)
+- `github_repo_https` (repo clone URL used by deployment)
+- `api_port` (default `3000`)
+- `app_root` (the server path where the repo is cloned)
 
-Copy `terraform.tfvars.example` to `terraform.tfvars` if present, or create `terraform.tfvars` and set these before running `terraform plan` / `terraform apply` in `infra`.
+To work with Terraform:
 
----
+```bash
+cd infra
+terraform init
+terraform plan
+terraform apply
+```
 
-## Deployment
+## Deployment (GitHub Actions)
 
-- **Backend:** Pushes to `main` that touch `api/` trigger the "Deploy Backend" workflow. It uses AWS SSM to run commands on the EC2 instance (e.g. pull latest, `npm ci`, restart the API service). Requires `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` in the repo secrets.
-- **Frontend:** Pushes to `main` that touch `app/` trigger the "Deploy Frontend" workflow. It builds the app, syncs `app/dist` to S3, and invalidates the CloudFront distribution. Requires the same AWS secrets plus `CLOUDFRONT_DISTRIBUTION_ID`.
+Workflows live in `.github/workflows/`:
 
-Workflow files: `.github/workflows/deploy-backend.yaml`, `.github/workflows/deploy-frontend.yaml`.
+- **Backend** (`deploy-backend.yaml`)
+  - Trigger: pushes to `main` that touch `api/**`
+  - Uses AWS SSM to run commands on the EC2 instance (pull latest, install deps, restart `infinite-convo-api`)
+- **Frontend** (`deploy-frontend.yaml`)
+  - Trigger: pushes to `main` that touch `app/**`
+  - Builds the app, syncs `app/dist` to S3, and invalidates CloudFront
+
+Required GitHub secrets:
+
+- `AWS_ACCESS_KEY_ID`
+- `AWS_SECRET_ACCESS_KEY`
+- `CLOUDFRONT_DISTRIBUTION_ID` (frontend only)
+
+## Production notes (how the API runs)
+
+The EC2 bootstrap (`infra/user_data.sh`) sets up:
+
+- A systemd service: `infinite-convo-api`
+- An env file at: `/etc/convomundo/api.env`
+- `MONGODB_URI` sourced from SSM Parameter Store at: `/convomundo/prod/MONGODB_URI`
