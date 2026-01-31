@@ -1,0 +1,5 @@
+ConvoMundo is a website for language teachers which hosts conversation questions, lesson plans, and other useful resources for these teachers. At present, there are four languages supported on ConvoMundo with plans to add in more over time. 
+
+To run ConvoMundo locally, you must first understand the architecture of this project and be familiar with React, Express, MongoDB, Terraform and common AWS services including but not limited to EC2, S3, etc. The root folder contains three folders, we have api, app, and infra. The api folder is a simple Express app written in Javascript with a few endpoints that the frontend consumes. The app folder is a Vite React app that uses React Router and Tailwind. Infra is the folder where the Terraform configuration is. 
+
+To start the api, you must first configure the CORS config in index.js to accept requests from http://localhost:5171 because that is the default port where your React app runs when using Vite. Just make sure to switch this back if you want to commit code so that it points to the production domain. 

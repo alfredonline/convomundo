@@ -1,0 +1,43 @@
+# API
+/api/.env
+/api/node_modules
+
+# App
+/app/.env
+/app/.env.*
+/app/node_modules
+/app/logs
+/app/*.log
+/app/npm-debug.log*
+/app/yarn-debug.log*
+/app/yarn-error.log*
+/app/pnpm-debug.log*
+/app/lerna-debug.log*
+/app/dist
+/app/dist-ssr
+/app/*.local
+/app/.vscode/*
+!/app/.vscode/extensions.json
+/app/.idea
+
+# Editor directories and files (repo-wide)
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+.terraform/
+/infra/*.tfstate
+/infra/*.tfstate.*
+/infra/crash.log
+/infra/crash.*.log
+*.pem
+/infra/.env
+/infra/.env.*
+/infra/terraform.tfvars
+infra/.terraform.lock.hcl

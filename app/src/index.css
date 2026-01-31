@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+@theme {
+  /* Brand Orange - Brightly Orange: #ff1e00 */
+  --color-brand-orange-50: #fff1f0;
+  --color-brand-orange-100: #ffe0dd;
+  --color-brand-orange-200: #ffc5bf;
+  --color-brand-orange-300: #ff9d93;
+  --color-brand-orange-400: #ff6b5c;
+  --color-brand-orange-500: #ff1e00;
+  --color-brand-orange-600: #e61a00;
+  --color-brand-orange-700: #cc1600;
+  --color-brand-orange-800: #b31200;
+  --color-brand-orange-900: #990e00;
+
+  /* Brand Blue - Dimly Blue: #e8f9fd */
+  --color-brand-blue-50: #e8f9fd;
+  --color-brand-blue-100: #d1f3fb;
+  --color-brand-blue-200: #a3e7f7;
+  --color-brand-blue-300: #75dbf3;
+  --color-brand-blue-400: #47cfef;
+  --color-brand-blue-500: #19c3eb;
+  --color-brand-blue-600: #149cbc;
+  --color-brand-blue-700: #0f758d;
+  --color-brand-blue-800: #0a4e5e;
+  --color-brand-blue-900: #05272f;
+
+  /* Brand Green - Alert/Highlight Green: #59ce8f */
+  --color-brand-green-50: #f0fdf6;
+  --color-brand-green-100: #dcfce7;
+  --color-brand-green-200: #bbf7d0;
+  --color-brand-green-300: #86efac;
+  --color-brand-green-400: #59ce8f;
+  --color-brand-green-500: #4ade80;
+  --color-brand-green-600: #22c55e;
+  --color-brand-green-700: #16a34a;
+  --color-brand-green-800: #15803d;
+  --color-brand-green-900: #166534;
+}
