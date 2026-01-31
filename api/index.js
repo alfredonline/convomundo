@@ -4,7 +4,6 @@ const app = express();
 const connectDB = require("./db/mongoose");
 const routes = require("./router");
 const PORT = process.env.PORT || 3000;
-const Topic = require("./schemas/Topic");
 
 app.use(express.json({ limit: "1mb" }));
 
@@ -18,7 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(cors({
   origin: "https://convomundo.com",
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  methods: ["GET"],
   credentials: false
 }));
 
@@ -31,37 +30,37 @@ app.use("/api", routes);
 
 connectDB();
 
-app.post("/topics", async (req, res) => {
-  try {
-    const { language, title, questions, vocabulary, summary, images, exampleSentences, collocations } = req.body;
+// app.post("/topics", async (req, res) => {
+//   try {
+//     const { language, title, questions, vocabulary, summary, images, exampleSentences, collocations } = req.body;
 
-    if (!title) {
-      return res.status(400).json({ error: "title is required" });
-    }
+//     if (!title) {
+//       return res.status(400).json({ error: "title is required" });
+//     }
 
-    const payload = {
-      language,
-      title,
-      questions: questions ?? [],
-      vocabulary: vocabulary ?? [],
-      summary: summary ?? '',
-      images: images ?? [],
-      exampleSentences: exampleSentences ?? [],
-      collocations: collocations ?? [],
-    };
+//     const payload = {
+//       language,
+//       title,
+//       questions: questions ?? [],
+//       vocabulary: vocabulary ?? [],
+//       summary: summary ?? '',
+//       images: images ?? [],
+//       exampleSentences: exampleSentences ?? [],
+//       collocations: collocations ?? [],
+//     };
 
-    const topic = await Topic.findOneAndUpdate(
-      { language: payload.language, title: payload.title },
-      payload,
-      { new: true, upsert: true, runValidators: true }
-    );
+//     const topic = await Topic.findOneAndUpdate(
+//       { language: payload.language, title: payload.title },
+//       payload,
+//       { new: true, upsert: true, runValidators: true }
+//     );
 
-    return res.status(201).json(topic);
-  } catch (err) {
-    console.error(err);
-    return res.status(400).json({ error: err.message });
-  }
-});
+//     return res.status(201).json(topic);
+//   } catch (err) {
+//     console.error(err);
+//     return res.status(400).json({ error: err.message });
+//   }
+// });
 
 
 
@@ -71,7 +70,7 @@ app.use((req, res) => {
     error: 'Route not found', 
     method: req.method, 
     path: req.path,
-    availableRoutes: ['/health', '/api/test', '/api/topics', '/api/topics/:id']
+    availableRoutes: ['/health', '/api/topics', '/api/topics/:id']
   });
 });
 
