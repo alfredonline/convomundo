@@ -19,6 +19,11 @@ const images = [
     language: 'Italian',
     image: 'https://res.cloudinary.com/damqrrryq/image/upload/v1769680720/sergey-omelchenko-_D6ttEOqGgo-unsplash_dd0p1d.jpg',
   },
+  {
+    language: "Mandarin Chinese",
+    image: "https://res.cloudinary.com/damqrrryq/image/upload/v1769879332/hanson-lu-Q36BvLGdOAg-unsplash_agbvdl.jpg",
+    isComingSoon: true
+  }
 ]
 
 /** Look up image URL by language name (matches API language string). */
@@ -27,7 +32,7 @@ function getImageForLanguage(language: string): string | undefined {
   return entry?.image;
 }
 
-export const languagesLoader = async ({}: LoaderFunctionArgs) => {
+export const languagesLoader = async ({ }: LoaderFunctionArgs) => {
   const apiUrl = production_api_url || development_api_url;
   const url = `${apiUrl}/api/languages`;
 
@@ -46,22 +51,22 @@ export const languagesLoader = async ({}: LoaderFunctionArgs) => {
     }
 
     const data = await response.json();
-    
+
     if (!Array.isArray(data)) {
       throw new Response('Invalid response format: expected array', { status: 500 });
     }
-    
+
     // Sort languages alphabetically
     const sortedLanguages = data.sort((a, b) => a.localeCompare(b));
-    
+
     return sortedLanguages as string[];
   } catch (error) {
     console.error('Fetch error:', error);
-    
+
     if (error instanceof Response) {
       throw error;
     }
-    
+
     throw new Response(`Network error: ${error instanceof Error ? error.message : 'Unknown error'}`, {
       status: 500,
     });
@@ -92,7 +97,7 @@ const languages = () => {
               <Link
                 key={language}
                 to={`/?lang=${encodeURIComponent(language)}`}
-                className="bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 border border-slate-200 hover:border-brand-orange-500 overflow-hidden group"
+                className="bg-whit  e rounded-lg shadow-md hover:shadow-xl transition-all duration-300 border border-slate-200 hover:border-brand-orange-500 overflow-hidden group"
               >
                 <div className="aspect-[4/3] w-full bg-slate-100 relative overflow-hidden">
                   {imageUrl ? (
@@ -108,6 +113,7 @@ const languages = () => {
                       </span>
                     </div>
                   )}
+
                 </div>
                 <div className="p-6">
                   <div className="flex items-center justify-between mb-2">
