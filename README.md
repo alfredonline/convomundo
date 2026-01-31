@@ -41,6 +41,18 @@ MONGODB_URI=mongodb://localhost:27017/convomundo
 PORT=3000
 ```
 
+Seed example data (optional, but recommended for first-time setup):
+
+```bash
+node seed/seed-data.js
+```
+
+To wipe and re-seed the `topics` collection:
+
+```bash
+node seed/seed-data.js --reset
+```
+
 Run the API:
 
 ```bash
