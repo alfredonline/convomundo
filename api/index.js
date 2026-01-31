@@ -14,11 +14,14 @@ const cors = require("cors");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+const allowedOrigins = [
+  "https://convomundo.com",
+  "https://www.convomundo.com"
+];
 
 app.use(cors({
-  origin: "https://convomundo.com",
-  methods: ["GET"],
-  credentials: false
+  origin: allowedOrigins,
+  methods: ["GET", "OPTIONS"]
 }));
 
 // Health check route (before API routes)
