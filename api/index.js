@@ -13,8 +13,6 @@ const cors = require("cors");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-import cors from "cors";
-
 const allowedOrigins = new Set([
   "https://convomundo.com",
   "https://www.convomundo.com",
