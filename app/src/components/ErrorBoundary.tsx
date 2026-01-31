@@ -1,6 +1,18 @@
 import { useRouteError, isRouteErrorResponse, Link } from 'react-router'
 
-export default function ErrorBoundary() {
+type ErrorBoundaryProps = {
+  title?: string
+  description?: string
+  primaryCtaLabel?: string
+  primaryCtaTo?: string
+}
+
+export default function ErrorBoundary({
+  title,
+  description,
+  primaryCtaLabel = 'Go Home',
+  primaryCtaTo = '/',
+}: ErrorBoundaryProps) {
   const error = useRouteError()
 
   const getErrorIcon = (status?: number) => {
@@ -34,7 +46,7 @@ export default function ErrorBoundary() {
 
   const getErrorDescription = (status?: number, statusText?: string) => {
     if (status === 404) {
-      return 'The page you&apos;re looking for doesn&apos;t exist or has been moved.'
+      return 'The page you\'re looking for doesn\'t exist or has been moved.'
     }
     if (status === 500) {
       return 'We encountered an internal server error. Please try again later.'
@@ -46,6 +58,9 @@ export default function ErrorBoundary() {
   }
 
   if (isRouteErrorResponse(error)) {
+    const resolvedTitle = title ?? getErrorTitle(error.status)
+    const resolvedDescription = description ?? getErrorDescription(error.status, error.statusText)
+
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center px-4 py-12">
         <div className="max-w-lg w-full bg-white rounded-lg shadow-md border border-slate-200 p-8 md:p-10 text-center">
@@ -67,24 +82,24 @@ export default function ErrorBoundary() {
 
           {/* Title */}
           <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
-            {getErrorTitle(error.status)}
+            {resolvedTitle}
           </h1>
 
           {/* Description */}
           <p className="text-slate-600 text-lg leading-relaxed mb-8 max-w-md mx-auto">
-            {getErrorDescription(error.status, error.statusText)}
+            {resolvedDescription}
           </p>
 
           {/* Actions */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              to="/"
+              to={primaryCtaTo}
               className="inline-flex items-center justify-center px-6 py-3 bg-brand-orange-500 text-white font-semibold rounded-lg hover:bg-brand-orange-600 transition-colors duration-200 group"
             >
               <svg className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
-              Go Home
+              {primaryCtaLabel}
             </Link>
             <button
               onClick={() => window.location.reload()}
@@ -115,24 +130,25 @@ export default function ErrorBoundary() {
 
         {/* Title */}
         <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
-          Unexpected Error
+          {title ?? 'Unexpected Error'}
         </h1>
 
         {/* Description */}
         <p className="text-slate-600 text-lg leading-relaxed mb-8 max-w-md mx-auto">
-          {error instanceof Error ? error.message : 'An unexpected error occurred. Please try again.'}
+          {description ??
+            (error instanceof Error ? error.message : 'An unexpected error occurred. Please try again.')}
         </p>
 
         {/* Actions */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
-            to="/"
+            to={primaryCtaTo}
             className="inline-flex items-center justify-center px-6 py-3 bg-brand-orange-500 text-white font-semibold rounded-lg hover:bg-brand-orange-600 transition-colors duration-200 group"
           >
             <svg className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
-            Go Home
+            {primaryCtaLabel}
           </Link>
           <button
             onClick={() => window.location.reload()}
