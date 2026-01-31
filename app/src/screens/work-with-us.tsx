@@ -19,7 +19,7 @@ const WorkWithUs = () => {
                 Work With Us
               </h1>
               <p className="text-lg text-slate-700 leading-relaxed max-w-3xl">
-                ConvoMundo is an open-source project, and we&apos;d love your help to make it even better. Join our community of contributors and help create valuable resources for language teachers and learners worldwide.
+                ConvoMundo is an open-source project, and we\'d love your help to make it even better. Join our community of contributors and help create valuable resources for language teachers and learners worldwide.
               </p>
             </div>
           </div>
@@ -48,7 +48,7 @@ const WorkWithUs = () => {
                 ConvoMundo is proudly open source, meaning our code is freely available for anyone to view, use, and contribute to. We believe in the power of community collaboration to create better educational resources for language learners and teachers worldwide.
               </p>
               <p className="text-slate-700 leading-relaxed">
-                By making ConvoMundo open source, we&apos;re committed to transparency, continuous improvement, and giving back to the educational community.
+                By making ConvoMundo open source, we\'re committed to transparency, continuous improvement, and giving back to the educational community.
               </p>
             </div>
 
@@ -68,7 +68,7 @@ const WorkWithUs = () => {
                 </div>
               </div>
               <p className="text-slate-700 leading-relaxed mb-6">
-                We welcome contributions from developers, educators, and language enthusiasts! Whether you&apos;re fixing bugs, adding new features, improving documentation, or suggesting new conversation topics, your contributions help make ConvoMundo better for everyone.
+                We welcome contributions from developers, educators, and language enthusiasts! Whether you\'re fixing bugs, adding new features, improving documentation, or suggesting new conversation topics, your contributions help make ConvoMundo better for everyone.
               </p>
               <div className="space-y-3">
                 {[

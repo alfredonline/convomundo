@@ -18,23 +18,52 @@ const router = createBrowserRouter([
         index: true,
         element: <Landing />,
         loader: landingLoader,
+        errorElement: (
+          <ErrorBoundary
+            title="Topics are unavailable"
+            description="We could not load topics for this page. Please try again."
+            primaryCtaLabel="Go Home"
+            primaryCtaTo="/"
+          />
+        ),
       },
       {
         path: '/topic/:language/:id',
         element: <Topic />,
         loader: topicLoader,
-        errorElement: <ErrorBoundary />,
+        errorElement: (
+          <ErrorBoundary
+            title="Topic not available"
+            description="We could not load this topic. Please try again or return to the topics list."
+            primaryCtaLabel="Browse languages"
+            primaryCtaTo="/languages"
+          />
+        ),
       },
       {
         path: '/languages',
         element: <Languages />,
         loader: languagesLoader,
-        errorElement: <ErrorBoundary />,
+        errorElement: (
+          <ErrorBoundary
+            title="Languages are unavailable"
+            description="We could not load the languages list right now. Please try again."
+            primaryCtaLabel="Go Home"
+            primaryCtaTo="/"
+          />
+        ),
       },
       {
         path: '/work-with-us',
         element: <WorkWithUs />,
-        errorElement: <ErrorBoundary />,
+        errorElement: (
+          <ErrorBoundary
+            title="This page is unavailable"
+            description="We could not load this page. Please try again."
+            primaryCtaLabel="Go Home"
+            primaryCtaTo="/"
+          />
+        ),
       },
     ],
   },

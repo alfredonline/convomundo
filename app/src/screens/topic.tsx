@@ -2,6 +2,7 @@ import { useLoaderData } from "react-router";
 import type { LoaderFunctionArgs } from "react-router";
 import Breadcrumbs from "../components/breadcrumbs";
 import { development_api_url, production_api_url } from "../constants/api";
+import { useScrollToTop } from "../hooks/useScrollToTop";
 
 interface Topic {
     _id: string;
@@ -40,6 +41,8 @@ export const topicLoader = async ({ params }: LoaderFunctionArgs) => {
 
 const Topic = () => {
     const topic = useLoaderData() as Topic;
+
+    useScrollToTop();
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-white to-slate-100">
