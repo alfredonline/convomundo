@@ -13,13 +13,11 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: <App />,
-    errorElement: <ErrorBoundary />,
     children: [
       {
         index: true,
         element: <Landing />,
         loader: landingLoader,
-        errorElement: <ErrorBoundary />,
       },
       {
         path: '/topic/:language/:id',

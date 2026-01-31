@@ -1,10 +1,11 @@
-import { useLoaderData, useSearchParams } from 'react-router'
+import { Link, useLoaderData, useSearchParams } from 'react-router'
 import type { LoaderFunctionArgs } from 'react-router'
 import TopicCard from '../components/topic-card'
 import SidebarRight from '../components/sidebar-right';
 import PopularTopicsCard from '../components/popular-topics-card';
 import StatsCard from '../components/stats-card';
 import { production_api_url, development_api_url } from '../constants/api';
+import { SITE_NAME } from '../constants/branding';
 
 interface Topic {
   _id: string;
@@ -18,10 +19,15 @@ interface Topic {
   collocations?: string[];
 }
 
+interface LandingLoaderData {
+  topics: Topic[];
+  didFetchSucceed: boolean;
+  fetchErrorMessage?: string;
+}
+
 export const landingLoader = async ({ request }: LoaderFunctionArgs) => {
   // Get API URL and ensure it has the correct format
-  let apiUrl = production_api_url || development_api_url;
-  console.log('apiUrl', apiUrl);
+  const apiUrl = import.meta.env.DEV ? development_api_url : production_api_url;
 
   // Get language from URL query parameters, default to 'English'
   // request.url might be relative, so we need to construct a full URL
@@ -44,26 +50,28 @@ export const landingLoader = async ({ request }: LoaderFunctionArgs) => {
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error('API Error Response:', {
-        status: response.status,
-        statusText: response.statusText,
-        body: errorText,
-        url: fetchUrl,
-      });
-      throw new Response(`Failed to fetch topics: ${response.statusText} (${response.status})`, {
-        status: response.status,
-      });
+      return {
+        topics: [],
+        didFetchSucceed: false,
+        fetchErrorMessage: `Failed to fetch topics: ${response.statusText} (${response.status})`,
+      } satisfies LandingLoaderData;
     }
 
     const data = await response.json();
 
     if (!Array.isArray(data)) {
       console.error('Expected array but got:', typeof data, data);
-      throw new Response('Invalid response format: expected array', { status: 500 });
+      return {
+        topics: [],
+        didFetchSucceed: false,
+        fetchErrorMessage: 'Invalid response format: expected an array of topics',
+      } satisfies LandingLoaderData;
     }
 
-    return data as Topic[];
+    return {
+      topics: data as Topic[],
+      didFetchSucceed: true,
+    } satisfies LandingLoaderData;
   } catch (error) {
     console.error('Fetch error details:', {
       error,
@@ -72,24 +80,23 @@ export const landingLoader = async ({ request }: LoaderFunctionArgs) => {
       url: fetchUrl,
     });
 
-    if (error instanceof Response) {
-      throw error;
-    }
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    if (errorMessage.includes('Failed to fetch') || errorMessage.includes('NetworkError')) {
-      throw new Response(`Cannot connect to API at ${fetchUrl}. Check if the server is running and CORS is configured correctly.`, {
-        status: 503,
-      });
-    }
 
-    throw new Response(`Network error: ${errorMessage}`, {
-      status: 500,
-    });
+    const humanMessage =
+      errorMessage.includes('Failed to fetch') || errorMessage.includes('NetworkError')
+        ? `We're having trouble getting topics right now, but you can still explore the site.`
+        : `Network error: ${errorMessage}`;
+
+    return {
+      topics: [],
+      didFetchSucceed: false,
+      fetchErrorMessage: humanMessage,
+    } satisfies LandingLoaderData;
   }
 };
 
 const landing = () => {
-  const topics = useLoaderData() as Topic[];
+  const { topics, didFetchSucceed, fetchErrorMessage } = useLoaderData() as LandingLoaderData;
   const [searchParams] = useSearchParams();
 
   // Get current language from URL query params or default to English
@@ -104,65 +111,149 @@ const landing = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-brand-blue-50 to-slate-50">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Header */}
-        <div className="mb-12">
-          <p className="text-slate-700 text-6xl font-bold leading-relaxed">
-            Topics in <span className="text-brand-orange-500">{currentLanguage}</span>
-          </p>
-        </div>
+        <section className="mb-12">
+          <div className="bg-white rounded-lg shadow-lg border border-brand-blue-200 overflow-hidden">
+            <div className="p-8 md:p-10">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+                <div className="lg:col-span-7">
+                  <h1 className="mt-5 text-slate-900 text-4xl md:text-5xl font-bold leading-tight">
+                    Teach through conversation with <span className="text-brand-orange-500">{SITE_NAME}</span>
+                  </h1>
 
-        {/* Main Content with Sidebar */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-8">
-          {/* Topics Grid - Left Side */}
-          <div className="lg:col-span-8">
-            <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
-              {topics.map((topic) => (
-                <TopicCard key={topic._id} topic={topic} />
-              ))}
-            </div>
-          </div>
+                  <p className="mt-4 text-slate-700 text-lg leading-relaxed max-w-2xl">
+                    Find ready-to-use topics, questions, vocabulary, and example sentences to keep your lessons flowing.
+                    Browse by language and pick a topic in seconds.
+                  </p>
 
-          {/* Sidebar - Right Side */}
-          <div className="lg:col-span-4">
-            <div className="space-y-6">
-              {/* Featured Topic */}
-
-
-              {/* Stats Card */}
-              <StatsCard
-                totalTopics={topics.length}
-                totalQuestions={totalQuestions}
-                totalVocabulary={totalVocabulary}
-              />
-              {featuredTopic && featuredTopic.images && featuredTopic.images.length > 0 && (
-                <SidebarRight
-                  imageUrl={featuredTopic.images[0]}
-                  title={`Featured: ${featuredTopic.title}`}
-                  description={featuredTopic.summary || `Explore ${featuredTopic.questions?.length || 0} conversation questions about ${featuredTopic.title.toLowerCase()}.`}
-                  linkUrl={`/topic/${featuredTopic.language || 'english'}/${featuredTopic._id}`}
-                  linkText="Explore Topic"
-                  isFeatured={true}
-                />
-              )}
-
-
-              {/* Popular Topics */}
-              {popularTopics.length > 0 && (
-                <div className="bg-white rounded-lg shadow-lg border border-slate-200 p-6">
-                  <h3 className="text-lg font-bold text-slate-900 mb-4">Popular Topics</h3>
-                  <div className="space-y-3">
-                    {popularTopics.map((topic) => (
-                      <PopularTopicsCard
-                        key={topic._id}
-                        topic={topic}
-                      />
-                    ))}
+                  <div className="mt-6 flex flex-col sm:flex-row gap-3">
+                    <Link
+                      to="/languages"
+                      className="inline-flex items-center justify-center px-5 py-3 bg-brand-orange-500 text-white font-semibold rounded-lg hover:bg-brand-orange-600 transition-colors duration-200"
+                    >
+                      Browse languages
+                    </Link>
+                    <Link
+                      to={`/` + `?lang=${encodeURIComponent(currentLanguage)}`}
+                      className="inline-flex items-center justify-center px-5 py-3 bg-white text-brand-orange-500 font-semibold rounded-lg border border-brand-orange-200 hover:bg-brand-blue-50 transition-colors duration-200"
+                    >
+                      Explore topics in {currentLanguage}
+                    </Link>
                   </div>
                 </div>
-              )}
+
+                <div className="lg:col-span-5">
+                  <div className="bg-brand-blue-50 border border-brand-blue-200 rounded-lg p-6">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <h2 className="text-slate-900 text-lg font-bold">
+                          Topics in <span className="text-brand-orange-500">{currentLanguage}</span>
+                        </h2>
+                        <p className="mt-1 text-slate-700 text-sm leading-relaxed">
+                          Use the sidebar stats and popular topics to find a great lesson fast.
+                        </p>
+                      </div>
+                      <Link
+                        to="/work-with-us"
+                        className="inline-flex items-center justify-center px-3 py-2 bg-white text-slate-700 font-semibold rounded-lg border border-brand-blue-200 hover:bg-brand-blue-50 transition-colors duration-200 whitespace-nowrap"
+                      >
+                        Contribute
+                      </Link>
+                    </div>
+
+                    <div className="mt-6 grid grid-cols-3 gap-3">
+                      <div className="bg-white border border-brand-blue-200 rounded-lg p-3">
+                        <div className="text-slate-900 text-xl font-bold">{topics.length}</div>
+                        <div className="text-slate-600 text-xs font-semibold uppercase tracking-wide">Topics</div>
+                      </div>
+                      <div className="bg-white border border-brand-blue-200 rounded-lg p-3">
+                        <div className="text-slate-900 text-xl font-bold">{totalQuestions}</div>
+                        <div className="text-slate-600 text-xs font-semibold uppercase tracking-wide">Questions</div>
+                      </div>
+                      <div className="bg-white border border-brand-blue-200 rounded-lg p-3">
+                        <div className="text-slate-900 text-xl font-bold">{totalVocabulary}</div>
+                        <div className="text-slate-600 text-xs font-semibold uppercase tracking-wide">Words</div>
+                      </div>
+                    </div>
+
+                    <div className="mt-5 flex flex-wrap gap-2">
+                      <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-brand-blue-200 text-slate-700 text-sm font-semibold">
+                        Conversation questions
+                      </span>
+                      <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-brand-blue-200 text-slate-700 text-sm font-semibold">
+                        Key vocabulary
+                      </span>
+                      <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-brand-blue-200 text-slate-700 text-sm font-semibold">
+                        Example sentences
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+        </section>
+
+        {/* Main Content with Sidebar */}
+        {topics.length === 0 ? (
+          <div className="mt-8">
+            <div className="bg-white rounded-lg shadow-lg border border-slate-200 p-6">
+              <h3 className="text-lg font-bold text-slate-900 mb-2">No topics to show</h3>
+              <p className="text-slate-700">
+                {!didFetchSucceed
+                  ? `We couldn't load topics right now. ${fetchErrorMessage ?? ''}`.trim()
+                  : 'There are no topics for this language yet.'}
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-8">
+            {/* Topics Grid - Left Side */}
+            <div className="lg:col-span-8">
+              <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
+                {topics.map((topic) => (
+                  <TopicCard key={topic._id} topic={topic} />
+                ))}
+              </div>
+            </div>
+
+            {/* Sidebar - Right Side */}
+            <div className="lg:col-span-4">
+              <div className="space-y-6">
+                {/* Stats Card */}
+                <StatsCard
+                  totalTopics={topics.length}
+                  totalQuestions={totalQuestions}
+                  totalVocabulary={totalVocabulary}
+                />
+                {featuredTopic && featuredTopic.images && featuredTopic.images.length > 0 && (
+                  <SidebarRight
+                    imageUrl={featuredTopic.images[0]}
+                    title={`Featured: ${featuredTopic.title}`}
+                    description={
+                      featuredTopic.summary ||
+                      `Explore ${featuredTopic.questions?.length || 0} conversation questions about ${featuredTopic.title.toLowerCase()}.`
+                    }
+                    linkUrl={`/topic/${featuredTopic.language || 'english'}/${featuredTopic._id}`}
+                    linkText="Explore Topic"
+                    isFeatured={true}
+                  />
+                )}
+
+                {/* Popular Topics */}
+                {popularTopics.length > 0 && (
+                  <div className="bg-white rounded-lg shadow-lg border border-slate-200 p-6">
+                    <h3 className="text-lg font-bold text-slate-900 mb-4">Popular Topics</h3>
+                    <div className="space-y-3">
+                      {popularTopics.map((topic) => (
+                        <PopularTopicsCard key={topic._id} topic={topic} />
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   )
