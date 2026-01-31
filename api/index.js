@@ -2,7 +2,6 @@ require('dotenv').config();
 const express = require("express");
 const app = express();
 const connectDB = require("./db/mongoose");
-const routes = require("./router");
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json({ limit: "1mb" }));
@@ -14,20 +13,38 @@ const cors = require("cors");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const allowedOrigins = [
-  "https://convomundo.com",
-  "https://www.convomundo.com"
-];
+import cors from "cors";
 
-app.use(cors({
-  origin: allowedOrigins,
-  methods: ["GET", "OPTIONS"]
-}));
+const allowedOrigins = new Set([
+  "https://convomundo.com",
+  "https://www.convomundo.com",
+]);
+
+const corsOptions = {
+  origin: (origin, cb) => {
+    if (!origin) return cb(null, true);
+
+    if (allowedOrigins.has(origin)) return cb(null, true);
+
+    return cb(new Error(`CORS blocked for origin: ${origin}`), false);
+  },
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: false,
+  optionsSuccessStatus: 204,
+};
+
+app.use(cors(corsOptions));
+
+app.options("*", cors(corsOptions));
 
 // Health check route (before API routes)
 app.get("/health", (_, res) => {
   res.json({ status: "OK", message: "API is running" });
 });
+
+const routes = require("./router");
+
 
 app.use("/api", routes);
 
