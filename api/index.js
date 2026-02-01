@@ -17,7 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 const allowedOrigins = new Set([
   "https://convomundo.com",
   "https://www.convomundo.com",
-    // "http://localhost:5173" // uncomment this when developing locally
+    "http://localhost:5173" // uncomment this when developing locally
 ]);
     
 const corsOptions = {

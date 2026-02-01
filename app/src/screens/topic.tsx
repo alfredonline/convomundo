@@ -56,7 +56,7 @@ const Topic = () => {
                         { id: 1, label: 'Home', path: '/' },
                         { id: 1, label: 'Languages', path: '/languages' },
                         { id: 2, label: 'Topics', path: '/' },
-                        { id: 3, label: topic.title, path: `/topic/${topic.language || 'english'}/${topic._id}` },
+                        { id: 3, label: topic.title, path: `/topic/${encodeURIComponent(topic.language || 'english')}/${topic._id}` },
                     ]
                 } />
 

@@ -278,7 +278,7 @@ const landing = () => {
                       featuredTopic.summary ||
                       `Explore ${featuredTopic.questions?.length || 0} conversation questions about ${featuredTopic.title.toLowerCase()}.`
                     }
-                    linkUrl={`/topic/${featuredTopic.language || 'english'}/${featuredTopic._id}`}
+                    linkUrl={`/topic/${encodeURIComponent(featuredTopic.language || 'english')}/${featuredTopic._id}`}
                     linkText="Explore Topic"
                     isFeatured={true}
                   />

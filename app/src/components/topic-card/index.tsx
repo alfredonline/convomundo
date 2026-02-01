@@ -23,7 +23,7 @@ const TopicCard = ({ topic }: { topic: Topic }) => {
 
   return (
     <Link
-      to={`/topic/${topic.language || 'english'}/${topic._id}`}
+      to={`/topic/${encodeURIComponent(topic.language || 'english')}/${topic._id}`}
       className="bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 border border-slate-200 hover:border-brand-orange-500 cursor-pointer overflow-hidden group"
     >
       {/* Image Preview */}

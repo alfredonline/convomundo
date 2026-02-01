@@ -1,14 +1,19 @@
 const Topic = require('../schemas/Topic');
 
+/** Escape special regex characters so lang (e.g. "Chinese (Simplified)") matches literally. */
+function escapeRegex(str) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 const getTopics = async (req, res) => {
     try {
         const { lang } = req.query;
-                
         const filter = {};
-        if (lang) {
-            filter.language = { $regex: new RegExp(`^${lang}$`, 'i') };
+        if (lang && typeof lang === 'string') {
+            const escaped = escapeRegex(lang.trim());
+            filter.language = { $regex: new RegExp(`^${escaped}$`, 'i') };
         }
-        
+
         const topics = await Topic.find(filter);
         res.json(topics);
     } catch (error) {
