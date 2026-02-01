@@ -13,6 +13,14 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: <App />,
+    hydrateFallbackElement: (
+      <div className="min-h-screen bg-gradient-to-br from-brand-blue-50 to-slate-50 flex items-center justify-center px-4 py-12">
+        <div className="max-w-lg w-full bg-white rounded-lg shadow-md border border-brand-blue-200 p-8 text-center">
+          <div className="text-slate-900 text-2xl font-bold">Loading</div>
+          <div className="mt-2 text-slate-600">Please wait a moment.</div>
+        </div>
+      </div>
+    ),
     children: [
       {
         index: true,
