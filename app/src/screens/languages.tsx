@@ -22,9 +22,8 @@ const images = [
     image: 'https://res.cloudinary.com/damqrrryq/image/upload/v1769680720/sergey-omelchenko-_D6ttEOqGgo-unsplash_dd0p1d.jpg',
   },
   {
-    language: "Mandarin Chinese",
+    language: "Chinese (Simplified)",
     image: "https://res.cloudinary.com/damqrrryq/image/upload/v1769879332/hanson-lu-Q36BvLGdOAg-unsplash_agbvdl.jpg",
-    isComingSoon: true
   }
 ]
 

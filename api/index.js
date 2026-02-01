@@ -3,6 +3,7 @@ const express = require("express");
 const app = express();
 const connectDB = require("./db/mongoose");
 const PORT = process.env.PORT || 3000;
+// const Topic = require("./schemas/Topic");
 
 app.use(express.json({ limit: "1mb" }));
 
@@ -16,7 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 const allowedOrigins = new Set([
   "https://convomundo.com",
   "https://www.convomundo.com",
-    "http://localhost:5173" // uncomment this when developing locally
+    // "http://localhost:5173" // uncomment this when developing locally
 ]);
     
 const corsOptions = {

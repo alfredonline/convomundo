@@ -47,7 +47,8 @@ const topicSchema = new mongoose.Schema(
   }
 );
 
-const Topic = mongoose.model('Topic', topicSchema);
+// Avoid OverwriteModelError when this file is required with different path casing (e.g. topic vs Topic)
+const Topic = mongoose.models.Topic ?? mongoose.model('Topic', topicSchema);
 
 module.exports = Topic;
 
