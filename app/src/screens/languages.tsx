@@ -14,7 +14,7 @@ const images = [
     image: 'https://res.cloudinary.com/damqrrryq/image/upload/v1769680753/jorge-fernandez-salas-ChSZETOal-I-unsplash_2_qrj8r2.jpg',
   },
   {
-    language: 'French',
+    language: 'French', 
     image: 'https://res.cloudinary.com/damqrrryq/image/upload/v1769680687/chris-karidis-nnzkZNYWHaU-unsplash_lnc5al.jpg',
   },
   {
