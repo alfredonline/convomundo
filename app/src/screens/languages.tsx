@@ -33,7 +33,7 @@ function getImageForLanguage(language: string): string | undefined {
 }
 
 export const languagesLoader = async ({ }: LoaderFunctionArgs) => {
-  const apiUrl = production_api_url || development_api_url;
+  const apiUrl = import.meta.env.DEV ? development_api_url : production_api_url;
   const url = `${apiUrl}/api/languages`;
 
   try {

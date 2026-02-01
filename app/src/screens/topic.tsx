@@ -1,8 +1,11 @@
+import { useState } from "react";
 import { useLoaderData } from "react-router";
 import type { LoaderFunctionArgs } from "react-router";
 import Breadcrumbs from "../components/breadcrumbs";
 import { development_api_url, production_api_url } from "../constants/api";
 import { useScrollToTop } from "../hooks/useScrollToTop";
+import { ClassroomModeModal } from "../components/classroom-mode-modal";
+import { FaBookOpen } from "react-icons/fa";
 
 interface Topic {
     _id: string;
@@ -20,7 +23,7 @@ interface Topic {
 
 
 export const topicLoader = async ({ params }: LoaderFunctionArgs) => {
-    const apiUrl = production_api_url || development_api_url;
+    const apiUrl = import.meta.env.DEV ? development_api_url : production_api_url;
     const id = params.id;
 
     if (!id) {
@@ -41,13 +44,14 @@ export const topicLoader = async ({ params }: LoaderFunctionArgs) => {
 
 const Topic = () => {
     const topic = useLoaderData() as Topic;
+    const [isClassroomModeOpen, setIsClassroomModeOpen] = useState(false);
 
     useScrollToTop();
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-white to-slate-100">
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <Breadcrumbs items={
+            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <Breadcrumbs items={
                     [
                         { id: 1, label: 'Home', path: '/' },
                         { id: 1, label: 'Languages', path: '/languages' },
@@ -66,6 +70,14 @@ const Topic = () => {
                                         {topic.language}
                                     </span>
                                 )}
+                                <button
+                                    type="button"
+                                    onClick={() => setIsClassroomModeOpen(true)}
+                                    className="inline-flex items-center justify-center px-4 py-2 bg-brand-orange-500 text-white font-semibold rounded-lg hover:bg-brand-orange-600 transition-colors duration-200"
+                                >
+                                    <FaBookOpen />
+                                    <span className="ml-2">Classroom mode</span>
+                                </button>
                             </div>
                             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-4">
                                 {topic.title}
@@ -78,6 +90,16 @@ const Topic = () => {
                         </div>
                     </div>
                 </div>
+
+                <ClassroomModeModal
+                    isOpen={isClassroomModeOpen}
+                    onClose={() => setIsClassroomModeOpen(false)}
+                    topicTitle={topic.title}
+                    topicLanguage={topic.language}
+                    summary={topic.summary}
+                    questions={topic.questions}
+                    vocabulary={topic.vocabulary}
+                />
 
                 {/* Two Column Layout */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
