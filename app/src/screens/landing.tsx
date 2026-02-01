@@ -1,9 +1,11 @@
 import { Link, useLoaderData, useSearchParams } from 'react-router'
 import type { LoaderFunctionArgs } from 'react-router'
+import { useState, useEffect } from 'react'
 import TopicCard from '../components/topic-card'
 import SidebarRight from '../components/sidebar-right';
 import PopularTopicsCard from '../components/popular-topics-card';
 import StatsCard from '../components/stats-card';
+import SearchBar from '../components/searchbar';
 import { production_api_url, development_api_url } from '../constants/api';
 import { SITE_NAME } from '../constants/branding';
 
@@ -95,18 +97,47 @@ export const landingLoader = async ({ request }: LoaderFunctionArgs) => {
   }
 };
 
+function topicMatchesSearch(topic: Topic, query: string): boolean {
+  const q = query.toLowerCase().trim();
+  if (!q) return true;
+  const title = (topic.title ?? '').toLowerCase();
+  const summary = (topic.summary ?? '').toLowerCase();
+  return title.includes(q) || summary.includes(q);
+}
+
 const landing = () => {
   const { topics, didFetchSucceed, fetchErrorMessage } = useLoaderData() as LandingLoaderData;
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   // Get current language from URL query params or default to English
   const currentLanguage = searchParams.get('lang') || 'English';
 
-  // Calculate dynamic stats
-  const totalQuestions = topics.reduce((sum, topic) => sum + (topic.questions?.length || 0), 0);
-  const totalVocabulary = topics.reduce((sum, topic) => sum + (topic.vocabulary?.length || 0), 0);
-  const featuredTopic = topics.length > 0 ? topics[0] : null;
-  const popularTopics = topics.slice(0, 3); // Top 3 topics as "popular"
+  // Search query synced with URL ?q=
+  const urlQuery = searchParams.get('q') ?? '';
+  const [searchQuery, setSearchQuery] = useState(urlQuery);
+
+  useEffect(() => {
+    setSearchQuery(urlQuery);
+  }, [urlQuery]);
+
+  const updateSearch = (value: string) => {
+    setSearchQuery(value);
+    const next = new URLSearchParams(searchParams);
+    if (value.trim()) {
+      next.set('q', value);
+    } else {
+      next.delete('q');
+    }
+    setSearchParams(next, { replace: true });
+  };
+
+  const filteredTopics = topics.filter((topic) => topicMatchesSearch(topic, searchQuery));
+
+  // Stats and sidebar derived from filtered list
+  const totalQuestions = filteredTopics.reduce((sum, topic) => sum + (topic.questions?.length || 0), 0);
+  const totalVocabulary = filteredTopics.reduce((sum, topic) => sum + (topic.vocabulary?.length || 0), 0);
+  const featuredTopic = filteredTopics.length > 0 ? filteredTopics[0] : null;
+  const popularTopics = filteredTopics.slice(0, 3);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-brand-blue-50 to-slate-50">
@@ -193,6 +224,11 @@ const landing = () => {
           </div>
         </section>
 
+        {/* Search - filters topics below */}
+        {topics.length > 0 && (
+          <SearchBar onSearch={updateSearch} value={searchQuery} placeholder="Search topics..." />
+        )}
+
         {/* Main Content with Sidebar */}
         {topics.length === 0 ? (
           <div className="mt-8">
@@ -205,12 +241,21 @@ const landing = () => {
               </p>
             </div>
           </div>
+        ) : filteredTopics.length === 0 ? (
+          <div className="mt-8">
+            <div className="bg-white rounded-lg shadow-lg border border-slate-200 p-6">
+              <h3 className="text-lg font-bold text-slate-900 mb-2">No topics match your search</h3>
+              <p className="text-slate-700">
+                No topics match &quot;{searchQuery}&quot;. Try a different search or clear the search to see all topics.
+              </p>
+            </div>
+          </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-8">
             {/* Topics Grid - Left Side */}
             <div className="lg:col-span-8">
               <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
-                {topics.map((topic) => (
+                {filteredTopics.map((topic) => (
                   <TopicCard key={topic._id} topic={topic} />
                 ))}
               </div>
@@ -221,7 +266,7 @@ const landing = () => {
               <div className="space-y-6">
                 {/* Stats Card */}
                 <StatsCard
-                  totalTopics={topics.length}
+                  totalTopics={filteredTopics.length}
                   totalQuestions={totalQuestions}
                   totalVocabulary={totalVocabulary}
                 />

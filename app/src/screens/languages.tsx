@@ -1,6 +1,8 @@
-import { useLoaderData, Link } from 'react-router'
+import { useLoaderData, Link, useSearchParams } from 'react-router'
 import type { LoaderFunctionArgs } from 'react-router'
 import { development_api_url, production_api_url } from '../constants/api';
+import { useState, useEffect } from 'react';
+import SearchBar from '../components/searchbar';
 
 const images = [
   {
@@ -75,12 +77,33 @@ export const languagesLoader = async ({ }: LoaderFunctionArgs) => {
 
 const languages = () => {
   const languages = useLoaderData() as string[];
+  const [searchParams, setSearchParams] = useSearchParams();
+  const urlQuery = searchParams.get('q') ?? '';
+  const [searchQuery, setSearchQuery] = useState(urlQuery);
 
+  // Sync URL q param with local state (e.g. on initial load or browser back)
+  useEffect(() => {
+    setSearchQuery(urlQuery);
+  }, [urlQuery]);
+
+  const updateSearch = (value: string) => {
+    setSearchQuery(value);
+    const next = new URLSearchParams(searchParams);
+    if (value.trim()) {
+      next.set('q', value);
+    } else {
+      next.delete('q');
+    }
+    setSearchParams(next, { replace: true });
+  };
+
+  const filteredLanguages = languages.filter((language) => language.toLowerCase().includes(searchQuery.toLowerCase()));
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Header */}
         <div className="mb-12">
+          <SearchBar onSearch={updateSearch} value={searchQuery} />
           <h1 className="text-slate-700 text-6xl font-bold leading-relaxed mb-4">
             Available Languages
           </h1>
@@ -91,13 +114,13 @@ const languages = () => {
 
         {/* Languages Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-8">
-          {languages.map((language) => {
+          {filteredLanguages.map((language) => {
             const imageUrl = getImageForLanguage(language);
             return (
               <Link
                 key={language}
                 to={`/?lang=${encodeURIComponent(language)}`}
-                className="bg-whit  e rounded-lg shadow-md hover:shadow-xl transition-all duration-300 border border-slate-200 hover:border-brand-orange-500 overflow-hidden group"
+                className="bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 border border-slate-200 hover:border-brand-orange-500 overflow-hidden group"
               >
                 <div className="aspect-[4/3] w-full bg-slate-100 relative overflow-hidden">
                   {imageUrl ? (
@@ -143,10 +166,12 @@ const languages = () => {
           })}
         </div>
 
-        {languages.length === 0 && (
+        {filteredLanguages.length === 0 && (
           <div className="bg-white rounded-lg shadow-md p-12 border border-slate-200 text-center mt-8">
             <p className="text-slate-600 text-lg">
-              No languages available yet.
+              {searchQuery.trim()
+                ? `No languages match "${searchQuery}". Try a different search.`
+                : 'No languages available yet.'}
             </p>
           </div>
         )}
