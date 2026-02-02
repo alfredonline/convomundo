@@ -1,4 +1,5 @@
 import Breadcrumbs from '../components/breadcrumbs'
+import HelpForm from '../components/help-form'
 
 const WorkWithUs = () => {
   return (
@@ -19,7 +20,7 @@ const WorkWithUs = () => {
                 Work With Us
               </h1>
               <p className="text-lg text-slate-700 leading-relaxed max-w-3xl">
-                ConvoMundo is an open-source project, and we\'d love your help to make it even better. Join our community of contributors and help create valuable resources for language teachers and learners worldwide.
+                ConvoMundo is an open-source project, and we&apos;d love your help to make it even better. Join our community of contributors and help create valuable resources for language teachers and learners worldwide.
               </p>
             </div>
           </div>
@@ -48,7 +49,7 @@ const WorkWithUs = () => {
                 ConvoMundo is proudly open source, meaning our code is freely available for anyone to view, use, and contribute to. We believe in the power of community collaboration to create better educational resources for language learners and teachers worldwide.
               </p>
               <p className="text-slate-700 leading-relaxed">
-                By making ConvoMundo open source, we\'re committed to transparency, continuous improvement, and giving back to the educational community.
+                By making ConvoMundo open source, we&apos;re committed to transparency, continuous improvement, and giving back to the educational community.
               </p>
             </div>
 
@@ -68,7 +69,7 @@ const WorkWithUs = () => {
                 </div>
               </div>
               <p className="text-slate-700 leading-relaxed mb-6">
-                We welcome contributions from developers, educators, and language enthusiasts! Whether you\'re fixing bugs, adding new features, improving documentation, or suggesting new conversation topics, your contributions help make ConvoMundo better for everyone.
+                We welcome contributions from developers, educators, and language enthusiasts! Whether you&apos;re fixing bugs, adding new features, improving documentation, or suggesting new conversation topics, your contributions help make ConvoMundo better for everyone.
               </p>
               <div className="space-y-3">
                 {[
@@ -93,6 +94,25 @@ const WorkWithUs = () => {
                   </div>
                 ))}
               </div>
+            </div>
+
+            {/* Suggest a topic or question (non-technical contributors) */}
+            <div className="bg-white rounded-lg shadow-md border border-slate-200 p-6">
+              <div className="mb-6">
+                <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-2 flex items-center gap-3">
+                  <svg className="w-6 h-6 text-brand-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                  </svg>
+                  Suggest a topic or question
+                </h2>
+                <p className="text-slate-600">
+                  Not a developer? No problem.
+                </p>
+              </div>
+              <p className="text-slate-700 leading-relaxed mb-6">
+                If you&apos;re a teacher or contributor and would like to add a conversation topic or questions to ConvoMundo without using GitHub, use the form below. Tell us your idea and we&apos;ll help get it onto convomundo.com.
+              </p>
+              <HelpForm />
             </div>
           </div>
 
