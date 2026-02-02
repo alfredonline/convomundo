@@ -5,6 +5,7 @@ import Breadcrumbs from "../components/breadcrumbs";
 import { development_api_url, production_api_url } from "../constants/api";
 import { useScrollToTop } from "../hooks/useScrollToTop";
 import { ClassroomModeModal } from "../components/classroom-mode-modal";
+import AdSense from "../components/adsense";
 import { FaBookOpen } from "react-icons/fa";
 
 interface Topic {
@@ -248,6 +249,9 @@ const Topic = () => {
                                 </div>
                             </div>
                         </div>
+
+                        {/* Ad unit */}
+                        <AdSense className="min-h-[100px]" />
                     </div>
                 </div>
             </main>

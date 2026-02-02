@@ -6,6 +6,7 @@ import SidebarRight from '../components/sidebar-right';
 import PopularTopicsCard from '../components/popular-topics-card';
 import StatsCard from '../components/stats-card';
 import SearchBar from '../components/searchbar';
+import AdSense from '../components/adsense';
 import { production_api_url, development_api_url } from '../constants/api';
 import { SITE_NAME } from '../constants/branding';
 
@@ -295,6 +296,9 @@ const landing = () => {
                     </div>
                   </div>
                 )}
+
+                {/* Ad unit */}
+                <AdSense className="min-h-[100px]" />
               </div>
             </div>
           </div>
