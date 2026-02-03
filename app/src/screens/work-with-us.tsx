@@ -1,9 +1,15 @@
 import Breadcrumbs from '../components/breadcrumbs'
 import HelpForm from '../components/help-form'
+import Seo from '../components/seo'
 
 const WorkWithUs = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-white to-slate-100">
+      <Seo
+        title="Work With Us"
+        description="Contribute to ConvoMundo, an open-source project for language teachers and learners. Help create conversation topics, vocabulary, and teaching resources."
+        path="/work-with-us"
+      />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <Breadcrumbs items={
           [

@@ -7,6 +7,7 @@ import PopularTopicsCard from '../components/popular-topics-card';
 import StatsCard from '../components/stats-card';
 import SearchBar from '../components/searchbar';
 import AdSense from '../components/adsense';
+import Seo from '../components/seo';
 import { production_api_url, development_api_url } from '../constants/api';
 import { SITE_NAME } from '../constants/branding';
 
@@ -140,8 +141,21 @@ const landing = () => {
   const featuredTopic = filteredTopics.length > 0 ? filteredTopics[0] : null;
   const popularTopics = filteredTopics.slice(0, 3);
 
+  const canonicalPath = searchParams.toString() ? `/?${searchParams.toString()}` : "/";
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-brand-blue-50 to-slate-50">
+      <Seo
+        title={`Topics in ${currentLanguage}`}
+        description={`Browse conversation topics in ${currentLanguage}. Find questions, vocabulary, and example sentences for language teaching.`}
+        path={canonicalPath}
+        schemaMarkup={{
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          name: `Topics in ${currentLanguage} - ${SITE_NAME}`,
+          description: `Conversation topics in ${currentLanguage} for language learners and teachers.`,
+        }}
+      />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <section className="mb-12">
           <div className="bg-white rounded-lg shadow-lg border border-brand-blue-200 overflow-hidden">

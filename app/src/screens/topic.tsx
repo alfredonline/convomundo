@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { useLoaderData } from "react-router";
+import { useLoaderData, useParams } from "react-router";
 import type { LoaderFunctionArgs } from "react-router";
 import Breadcrumbs from "../components/breadcrumbs";
+import Seo from "../components/seo";
 import { development_api_url, production_api_url } from "../constants/api";
 import { useScrollToTop } from "../hooks/useScrollToTop";
 import { ClassroomModeModal } from "../components/classroom-mode-modal";
@@ -45,12 +46,29 @@ export const topicLoader = async ({ params }: LoaderFunctionArgs) => {
 
 const Topic = () => {
     const topic = useLoaderData() as Topic;
+    const params = useParams<{ language: string; id: string }>();
     const [isClassroomModeOpen, setIsClassroomModeOpen] = useState(false);
 
     useScrollToTop();
 
+    const topicPath = params.language && params.id ? `/topic/${params.language}/${params.id}` : "";
+    const ogImage = topic.images?.[0];
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-white to-slate-100">
+            <Seo
+                title={topic.title}
+                description={topic.summary ?? `Conversation topic: ${topic.title}. Questions, vocabulary, and example sentences for language teaching.`}
+                path={topicPath}
+                image={ogImage}
+                schemaMarkup={{
+                    "@context": "https://schema.org",
+                    "@type": "Article",
+                    headline: topic.title,
+                    description: topic.summary ?? topic.title,
+                    image: ogImage ? [ogImage] : undefined,
+                }}
+            />
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <Breadcrumbs items={
                     [
