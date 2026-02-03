@@ -3,6 +3,7 @@ import type { LoaderFunctionArgs } from 'react-router'
 import { development_api_url, production_api_url } from '../constants/api';
 import { useState, useEffect } from 'react';
 import SearchBar from '../components/searchbar';
+import Seo from '../components/seo';
 
 const images = [
   {
@@ -99,6 +100,11 @@ const languages = () => {
   const filteredLanguages = languages.filter((language) => language.toLowerCase().includes(searchQuery.toLowerCase()));
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+      <Seo
+        title="Languages"
+        description="Browse conversation topics by language. Select a language to view available topics, questions, and vocabulary for language teaching."
+        path="/languages"
+      />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Header */}
         <div className="mb-12">
