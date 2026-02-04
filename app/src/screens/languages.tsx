@@ -171,6 +171,12 @@ const languages = () => {
           })}
         </div>
 
+        <div className="mt-8 bg-white rounded-lg shadow-md border border-slate-200 p-6 text-center">
+          <p className="text-slate-600 text-lg">
+            More languages coming soon&hellip;
+          </p>
+        </div>
+
         {filteredLanguages.length === 0 && (
           <div className="bg-white rounded-lg shadow-md p-12 border border-slate-200 text-center mt-8">
             <p className="text-slate-600 text-lg">
