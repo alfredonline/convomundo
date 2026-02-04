@@ -10,6 +10,12 @@ import AdSense from '../components/adsense';
 import Seo from '../components/seo';
 import { production_api_url, development_api_url } from '../constants/api';
 import { SITE_NAME } from '../constants/branding';
+import NativeSpeakerVerifiedCard from '../components/native-speaker-verified-card';
+
+const verifiedLanguages = [
+  "English",
+  "Spanish"
+] // temporary but later on we will add this is a field in the schema. // TODO: Alfie, fix this. 
 
 interface Topic {
   _id: string;
@@ -161,6 +167,7 @@ const landing = () => {
           <div className="bg-white rounded-lg shadow-lg border border-brand-blue-200 overflow-hidden">
             <div className="p-8 md:p-10">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+
                 <div className="lg:col-span-7">
                   <h1 className="mt-5 text-slate-900 text-4xl md:text-5xl font-bold leading-tight">
                     Teach through conversation with <span className="text-brand-orange-500">{SITE_NAME}</span>
@@ -220,6 +227,7 @@ const landing = () => {
                         <div className="text-slate-600 text-xs font-semibold uppercase tracking-wide">Words</div>
                       </div>
                     </div>
+
 
                     <div className="mt-5 flex flex-wrap gap-2">
                       <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-brand-blue-200 text-slate-700 text-sm font-semibold">
@@ -297,6 +305,11 @@ const landing = () => {
                     linkText="Explore Topic"
                     isFeatured={true}
                   />
+                )}
+                {verifiedLanguages.includes(currentLanguage) && (
+                  <div className="lg:col-span-1 mt-5">
+                    <NativeSpeakerVerifiedCard language={currentLanguage} />
+                  </div>
                 )}
 
                 {/* Popular Topics */}
