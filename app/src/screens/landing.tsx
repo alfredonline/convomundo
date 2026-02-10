@@ -324,8 +324,40 @@ const landing = () => {
                   </div>
                 )}
 
+                <div className="bg-white rounded-lg shadow-lg border border-slate-200 p-6">
+                  <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3">
+                    Official partner
+                  </h3>
+                  <div className="flex flex-col sm:flex-row items-center gap-4">
+                    <a
+                      href="https://www.lingjo.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-shrink-0 rounded-lg overflow-hidden border border-slate-200 hover:border-brand-orange-300 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-orange-400 focus:ring-offset-2"
+                    >
+                      <img
+                        src="/logo.png"
+                        alt="Lingjo"
+                        className="w-16 h-16 object-contain"
+                      />
+                    </a>
+                    <p className="text-slate-700 text-sm leading-relaxed text-center sm:text-left">
+                      ConvoMundo is an official partner of{" "}
+                      <a
+                        href="https://www.lingjo.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-semibold text-brand-orange-500 hover:text-brand-orange-600 underline decoration-brand-orange-200 hover:decoration-brand-orange-500 transition-colors"
+                      >
+                        Lingjo
+                      </a>
+                      .
+                    </p>
+                  </div>
+                </div>
+
                 {/* Ad unit */}
-                <AdSense className="min-h-[100px]" />
+                <AdSense />
               </div>
             </div>
           </div>
