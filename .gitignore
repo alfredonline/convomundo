@@ -1,24 +1,14 @@
-# API
-/api/.env
-/api/node_modules
-
-# App
-/app/.env
-/app/.env.*
-/app/node_modules
-/app/logs
-/app/*.log
-/app/npm-debug.log*
-/app/yarn-debug.log*
-/app/yarn-error.log*
-/app/pnpm-debug.log*
-/app/lerna-debug.log*
-/app/dist
-/app/dist-ssr
-/app/*.local
-/app/.vscode/*
-!/app/.vscode/extensions.json
-/app/.idea
+node_modules
+.next
+out
+.env
+.env.*
+!.env.example
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 
 # Editor directories and files (repo-wide)
 .vscode/*
